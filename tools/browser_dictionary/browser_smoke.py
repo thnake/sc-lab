@@ -42,17 +42,16 @@ def main():
             assert 'id="search-button" disabled' not in dom, "Search stayed disabled"
             assert 'href="licenses.html"' in dom, "Missing public license page link"
             assert 'href="LICENSE-DPD.txt"' in dom, "Missing offline DPD license link"
-            dpd_notice = dom.split('id="dpd-attribution"', 1)[1].split('>', 1)[0]
             included_dpd = 'DPD' in dom.split('id="metadata"', 1)[1]
-            assert ('hidden' not in dpd_notice) == included_dpd, "DPD credit visibility disagrees with included data"
+            assert ('data-license-source="DPD"' in dom) == included_dpd, "DPD credit visibility disagrees with included data"
             if query == "compassion":
                 assert 'lang="pi">karuṇā</h2>' in dom, "Pāli diacritics were lost"
             print(f"PASS file:// query {query!r}")
 
         license_dom = render(HERE / "licenses.html")
-        assert "Bodhirasa Bhikkhu" in license_dom
-        assert "CC BY-NC-SA 4.0" in license_dom
-        assert "File-specific license and required creator attribution remain unconfirmed." in license_dom
+        for source in ("DPD", "NCPED", "Glossary"):
+            included = source in dom.split('id="metadata"', 1)[1]
+            assert (f'data-license-source="{source}"' in license_dom) == included, f"{source} license visibility disagrees with included data"
         print("PASS offline license page and source credits")
 
         for query, expected in [
@@ -78,7 +77,7 @@ def main():
         # Exercise change/submit/click handlers in the actual browser, too.
         interaction = Path(temporary) / "interaction"
         interaction.mkdir()
-        for name in ("app.js", "search.js", "style.css", "data.js"):
+        for name in ("app.js", "licenses.js", "search.js", "style.css", "data.js"):
             shutil.copyfile(HERE / name, interaction / name)
         html = (HERE / "index.html").read_text(encoding="utf-8")
         (interaction / "index.html").write_text(html.replace(
@@ -202,7 +201,7 @@ def main():
 
         missing = Path(temporary) / "missing-data"
         missing.mkdir()
-        for name in ("index.html", "app.js", "search.js", "style.css"):
+        for name in ("index.html", "app.js", "licenses.js", "search.js", "style.css"):
             shutil.copyfile(HERE / name, missing / name)
         assert "Dictionary data is missing. Run:" in render(missing / "index.html")
         print("PASS missing-data recovery instructions")

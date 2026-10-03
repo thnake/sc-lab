@@ -25,7 +25,6 @@
   let timer;
   const PAGE_SIZE = 30;
   const sourceNames = Object.keys(PALI_DICTIONARY.sources);
-  $("dpd-attribution").hidden = !sourceNames.includes("DPD");
   $("sources").textContent = `Included sources: ${sourceNames.join(", ")}. Original meanings and Pāli spelling are preserved; source markup is removed. Cross-reference-only records are omitted. DPD, when included, uses distinct lemma senses with explicitly marked English meanings.`;
   $("metadata").textContent = `${dictionary.entries.length.toLocaleString("en")} dictionary senses · ${sourceNames.join(" + ")} · Local search`;
   input.disabled = false;
