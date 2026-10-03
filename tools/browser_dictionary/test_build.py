@@ -1,6 +1,6 @@
 """Data-shape regressions; run with Python's built-in unittest runner."""
 
-from contextlib import redirect_stdout
+from contextlib import redirect_stderr, redirect_stdout
 from hashlib import sha256
 import io
 import json
@@ -15,6 +15,43 @@ from build import dpd_records, plain, simple_records
 
 
 class BuildTests(unittest.TestCase):
+    def test_dialog_shows_licenses_and_selects_only_approved_sources(self):
+        output = io.StringIO()
+        with patch("builtins.input", side_effect=["invalid", "", "no", "YES"]), redirect_stdout(output):
+            self.assertEqual(builder.select_sources(), ["DPD"])
+        self.assertIn("License: unconfirmed", output.getvalue())
+        self.assertIn("CC-BY-NC-SA-4.0", output.getvalue())
+        self.assertIn("Please enter yes or no", output.getvalue())
+
+    def test_unselected_sources_are_not_read_or_distributed(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            (root / "DPD.json").write_text(json.dumps([
+                {"entry": "sati", "definition": "sati 1: fem. <b>memory</b>"},
+            ]), encoding="utf-8")
+            output = root / "data.js"
+            paths = {source: f"{source}.json" for source in builder.SOURCES}
+            with patch.object(builder, "ROOT", root), patch.object(builder, "SOURCES", paths), \
+                    patch.object(sys, "argv", ["build.py", "--sources", "DPD", "--output", str(output)]), \
+                    redirect_stdout(io.StringIO()):
+                builder.main()
+            script = output.read_text(encoding="utf-8")
+            data = json.loads(script.split("globalThis.PALI_DICTIONARY = ", 1)[1].removesuffix(";\n"))
+            self.assertEqual(set(data["sources"]), {"DPD"})
+            self.assertEqual({entry[3] for entry in data["entries"]}, {"DPD"})
+            self.assertNotIn("// NCPED:", script)
+            self.assertNotIn("// Glossary:", script)
+
+    def test_declining_all_sources_preserves_existing_output(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            output = Path(temporary) / "data.js"
+            output.write_text("existing data", encoding="utf-8")
+            with patch.object(sys, "argv", ["build.py", "--output", str(output)]), \
+                    patch("builtins.input", return_value="no"), redirect_stdout(io.StringIO()), \
+                    redirect_stderr(io.StringIO()), self.assertRaises(SystemExit):
+                builder.main()
+            self.assertEqual(output.read_text(encoding="utf-8"), "existing data")
+
     def test_distributed_payload_preserves_source_rights_and_input_fingerprints(self):
         fixtures = {
             "NCPED": [{"entry": "sati", "definition": "memory"}],
@@ -30,8 +67,7 @@ class BuildTests(unittest.TestCase):
             for include_dpd in (True, False):
                 with self.subTest(include_dpd=include_dpd):
                     argv = ["build.py", "--output", str(output)]
-                    if not include_dpd:
-                        argv.append("--no-dpd")
+                    argv.append("--include-dpd" if include_dpd else "--no-dpd")
                     with patch.object(builder, "ROOT", root), patch.object(builder, "SOURCES", paths), \
                             patch.object(sys, "argv", argv), redirect_stdout(io.StringIO()):
                         builder.main()

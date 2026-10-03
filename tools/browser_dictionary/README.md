@@ -17,6 +17,26 @@ Source-specific rights and modifications are documented in
 DPD extracts are CC BY-NC-SA 4.0; file-specific licensing and attribution for
 NCPED and Glossary still need confirmation before public data redistribution.
 
+## Dictionary Package Selection
+
+From this directory, run `python3 build.py` to choose dictionary packages in
+the terminal. Each yes/no prompt displays the package's license and rights
+notice; pressing Enter excludes that package. Selecting no packages or
+cancelling leaves the existing output unchanged.
+
+For unattended builds, specify packages explicitly:
+
+```sh
+python3 build.py --sources DPD
+python3 build.py --sources NCPED Glossary
+```
+
+Only selected packages are read and included in the generated entries and
+source notices. The legacy `--include-dpd` (all packages) and `--no-dpd`
+(NCPED + Glossary) options still work without prompting. NCPED and Glossary
+licenses remain unconfirmed; package selection does not grant redistribution
+rights.
+
 ## deprecated
 
 - `additional-info/blurbs.json`: use `bilara-data/tree/published/root/en/blurb` instead.

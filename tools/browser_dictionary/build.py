@@ -8,7 +8,7 @@ import json
 from pathlib import Path
 import re
 
-ROOT = Path(__file__).resolve().parents[1]
+ROOT = Path(__file__).resolve().parents[2] / "sc-data"
 SOURCES = {
     "NCPED": "dictionaries/simple/en/pli2en_ncped.json",
     "Glossary": "dictionaries/glossaries/en/pli2en_glossary.json",
@@ -81,11 +81,32 @@ def dpd_records(rows):
                 yield (plain(lemma), meaning, plain(grammar), "DPD")
 
 
-def build(include_dpd=True):
+def select_sources():
+    notices = json.loads(Path(__file__).with_name("source-notices.json").read_text(encoding="utf-8"))
+    selected = []
+    print("Choose dictionary packages to include. Review each source's licensing before redistribution.")
+    for source in SOURCES:
+        notice = notices[source]
+        print(f"\n{source}: {notice['title']}")
+        print(f"License: {notice['license'] or 'unconfirmed'}")
+        print(notice["licenseNotice"])
+        while True:
+            answer = input(f"Include {source}? [y/N]: ").strip().lower()
+            if answer in {"", "n", "no", "y", "yes"}:
+                if answer in {"y", "yes"}:
+                    selected.append(source)
+                break
+            print("Please enter yes or no.")
+    return selected
+
+
+def build(include_dpd=True, selected_sources=None):
     records = set()
     sources = {}
     notices = json.loads(Path(__file__).with_name("source-notices.json").read_text(encoding="utf-8"))
     for source, relative_path in SOURCES.items():
+        if selected_sources is not None and source not in selected_sources:
+            continue
         if source == "DPD" and not include_dpd:
             continue
         path = ROOT / relative_path
@@ -109,22 +130,32 @@ def build(include_dpd=True):
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     dpd = parser.add_mutually_exclusive_group()
-    dpd.add_argument("--include-dpd", dest="include_dpd", action="store_true", help="include DPD lemma meanings (default)")
+    dpd.add_argument("--include-dpd", dest="include_dpd", action="store_true", help="build all sources without prompting")
     dpd.add_argument("--no-dpd", dest="include_dpd", action="store_false", help="build a smaller NCPED + Glossary dataset")
-    parser.set_defaults(include_dpd=True)
+    parser.set_defaults(include_dpd=None)
+    parser.add_argument("--sources", nargs="+", choices=list(SOURCES), help="select packages without prompting")
     parser.add_argument("--output", type=Path, default=Path(__file__).with_name("data.js"))
     args = parser.parse_args()
-    data = build(args.include_dpd)
+    if args.sources is not None and args.include_dpd is not None:
+        parser.error("use --sources or the DPD flags, not both")
+    selected_sources = args.sources
+    if selected_sources is None and args.include_dpd is None:
+        try:
+            selected_sources = select_sources()
+        except (EOFError, KeyboardInterrupt):
+            parser.exit(1, "\nSelection cancelled; no output written. Use --sources for unattended builds.\n")
+        if not selected_sources:
+            parser.error("no packages selected; no output written")
+    data = build(args.include_dpd is not False, selected_sources)
     payload = json.dumps(data, ensure_ascii=False, separators=(",", ":"))
     # Also safe if the dataset is embedded in an HTML script in future.
     payload = payload.replace("<", "\\u003c").replace("\u2028", "\\u2028").replace("\u2029", "\\u2029")
-    header = (
-        "// Dictionary data: source-specific rights apply; see PALI_DICTIONARY.sources.\n"
-        "// DPD, when included: Copyright (c) Bodhirasa Bhikkhu; CC-BY-NC-SA-4.0.\n"
-        "// https://creativecommons.org/licenses/by-nc-sa/4.0/\n"
-        "// Modified extract; attribution, changes and disclaimers are embedded below.\n"
-        "// NCPED and Glossary: file-specific license confirmation remains outstanding.\n"
-    )
+    header = "// Dictionary data: source-specific rights apply; see PALI_DICTIONARY.sources.\n"
+    for source, notice in data["sources"].items():
+        header += f"// {source}: {notice.get('copyright', notice['title'])}; {notice['license'] or 'license unconfirmed'}.\n"
+        if notice.get("licenseUrl"):
+            header += f"// {notice['licenseUrl']}\n"
+    header += "// Modified extract; attribution, changes and disclaimers are embedded below.\n"
     args.output.write_text(f"{header}globalThis.PALI_DICTIONARY = {payload};\n", encoding="utf-8")
     size = args.output.stat().st_size
     print(f"Built {args.output}: {len(data['entries']):,} senses, {size / 1024 / 1024:.2f} MiB")
