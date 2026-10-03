@@ -1,0 +1,39 @@
+{
+  "NCPED": {
+    "title": "New Concise Pali-English Dictionary",
+    "sourceUrl": "https://github.com/suttacentral/sc-data/blob/main/dictionaries/simple/en/pli2en_ncped.json",
+    "license": null,
+    "licenseStatus": "unconfirmed",
+    "licenseNotice": "No file-specific license has been verified. SuttaCentral's general CC0 policy applies to its own original material, not automatically to third-party material. Confirm the license and required attribution with SuttaCentral before public redistribution.",
+    "policyUrl": "https://suttacentral.net/licensing",
+    "provenance": "Distributed by SuttaCentral. Its dictionaries README describes NCPED as based on Ven. Buddhadatta's CPED, with entries updated and corrected following Cone's Dictionary of Pali. This is provenance, not a claim of a license grant from those authors.",
+    "modifications": "Extracted definitions and grammar, including nested homonyms; converted markup to plain text; omitted cross-reference-only records; deduplicated and sorted records; indexed for English and Pali lookup."
+  },
+  "Glossary": {
+    "title": "SuttaCentral Pali-English Glossary",
+    "sourceUrl": "https://github.com/suttacentral/sc-data/blob/main/dictionaries/glossaries/en/pli2en_glossary.json",
+    "license": null,
+    "licenseStatus": "unconfirmed",
+    "licenseNotice": "No file-specific license or complete creator attribution has been verified. SuttaCentral's general CC0 policy applies to its own original material, not automatically to third-party material. Confirm the license and required attribution with SuttaCentral before public redistribution.",
+    "policyUrl": "https://suttacentral.net/licensing",
+    "provenance": "Distributed in SuttaCentral/sc-data; the file contains short English glosses without a file-specific rights notice.",
+    "modifications": "Extracted English glosses; converted markup to plain text; deduplicated and sorted records; indexed for English and Pali lookup."
+  },
+  "DPD": {
+    "title": "Digital Pāḷi Dictionary",
+    "creator": "Bodhirasa Bhikkhu",
+    "copyright": "Copyright (c) Bodhirasa Bhikkhu",
+    "sourceUrl": "https://dpdict.net/",
+    "upstreamLicenseUrl": "https://github.com/digitalpalidictionary/dpd-db/blob/main/LICENSE",
+    "license": "CC-BY-NC-SA-4.0",
+    "licenseStatus": "verified-upstream",
+    "licenseUrl": "https://creativecommons.org/licenses/by-nc-sa/4.0/",
+    "licenseTextUrl": "https://creativecommons.org/licenses/by-nc-sa/4.0/legalcode.en",
+    "localLicenseFile": "LICENSE-DPD.txt",
+    "licenseNotice": "The DPD material and this project's contributions to its adapted DPD data are provided under Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International. Attribute the source, indicate modifications, use only for noncommercial purposes, and share adaptations under the same or a permitted compatible license. Do not impose additional restrictions or imply endorsement.",
+    "databaseRightsNotice": "To the extent this project holds its own rights in an adapted combined database containing DPD, those rights are also provided under CC BY-NC-SA 4.0. This does not relicense the individual NCPED or Glossary contents or supply missing permissions for them.",
+    "disclaimer": "DPD is provided as-is and as-available, without warranties, to the extent permitted by law. See Section 5 of the license for the full disclaimer of warranties and limitation of liability.",
+    "provenance": "Obtained through SuttaCentral/sc-data's customized lightweight DPD export. The DPD release version and the complete history of prior export modifications are not recorded in that JSON; no current DPD release version is claimed.",
+    "modifications": "Further selected explicitly bold-marked English meanings; extracted lemma, sense number and grammar from the definition prefix; converted HTML to plain text; deduplicated inflected lookup forms into lemma senses; omitted unstructured decompositions and unmarked legacy definitions; sorted records and indexed for English and Pali lookup. This is an incomplete, modified extract, not the full DPD."
+  }
+}

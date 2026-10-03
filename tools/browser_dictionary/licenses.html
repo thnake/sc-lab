@@ -1,0 +1,87 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Sources and licenses · English ↔ Pāli dictionary</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <main>
+    <header>
+      <p><a href="index.html">Back to the dictionary</a></p>
+      <h1>Sources and licenses</h1>
+      <p>The dictionary combines separately identified data sources. Each source retains its own rights.</p>
+    </header>
+    <section aria-labelledby="dpd-heading">
+      <h2 id="dpd-heading">Digital Pāḷi Dictionary (DPD)</h2>
+      <p>Creator: <strong>Bodhirasa Bhikkhu</strong>. Copyright (c) Bodhirasa Bhikkhu.</p>
+      <p>Original: <a href="https://dpdict.net/">Digital Pāḷi Dictionary</a>.
+        <a href="https://digitalpalidictionary.github.io/license/">Publisher's license notice</a>;
+        <a href="https://github.com/digitalpalidictionary/dpd-db/blob/main/LICENSE">upstream license file</a>.</p>
+      <p>DPD is licensed under
+        <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="license">Creative Commons
+        Attribution-NonCommercial-ShareAlike 4.0 International (CC BY-NC-SA 4.0)</a>.
+        <a href="LICENSE-DPD.txt">The full license is included locally</a>, including its warranty disclaimer
+        and limitation of liability. DPD is provided as-is and as-available, without warranties,
+        to the extent permitted by law.</p>
+      <p>When DPD is included in a build, its data and this project's contributions to that adapted DPD
+        data are provided under CC BY-NC-SA 4.0. Attribute the source, indicate modifications, use only
+        for noncommercial purposes, and share adaptations under the same or a permitted compatible license.
+        Do not impose additional legal or technological restrictions on the licensed rights.</p>
+      <h3>Provenance and changes</h3>
+      <p>The input is SuttaCentral's customized lightweight export,
+        <a href="https://github.com/suttacentral/sc-data/blob/main/dictionaries/simple/en/pli2en_dpd.json">pli2en_dpd.json</a>.
+        The <a href="https://digitalpalidictionary.github.io/integrations/sutta_central/">DPD integration notes</a>
+        describe that earlier customization. The input JSON does not record a DPD release version or a
+        complete history of prior export modifications. This project does not claim to include the current
+        DPD release. Each build embeds a SHA-256 checksum of the exact input file in <code>data.js</code>.</p>
+      <ul>
+        <li>Selected explicitly bold-marked English meanings.</li>
+        <li>Extracted lemma, sense number and grammar from the definition prefix.</li>
+        <li>Converted HTML to plain text and deduplicated inflected lookup forms into lemma senses.</li>
+        <li>Omitted unstructured decompositions and unmarked legacy definitions.</li>
+        <li>Sorted the records and indexed them for English → Pāli and Pāli → English lookup.</li>
+      </ul>
+      <p>This is an incomplete, modified extract, not the full DPD. No endorsement by Bodhirasa Bhikkhu,
+        DPD or SuttaCentral is implied.</p>
+    </section>
+    <section aria-labelledby="ncped-heading">
+      <h2 id="ncped-heading">New Concise Pali-English Dictionary (NCPED)</h2>
+      <p>Source: <a href="https://github.com/suttacentral/sc-data/blob/main/dictionaries/simple/en/pli2en_ncped.json">SuttaCentral/sc-data</a>.
+        SuttaCentral's <a href="https://github.com/suttacentral/sc-data/blob/main/dictionaries/README.md">dictionaries README</a>
+        describes NCPED as based on Ven. Buddhadatta's CPED, with entries updated and corrected following
+        Cone's <cite>Dictionary of Pali</cite>. This is provenance, not a license grant from those authors.</p>
+      <p><strong>File-specific license and required creator attribution remain unconfirmed.</strong>
+        SuttaCentral's <a href="https://suttacentral.net/licensing">general licensing policy</a> dedicates
+        its own original material to CC0, but distinguishes third-party material. This project does not
+        assert that all NCPED content falls under CC0. Confirm redistribution terms with SuttaCentral.</p>
+      <p>Changes: extracted definitions and grammar, including nested homonyms; converted markup to plain
+        text; omitted cross-reference-only records; deduplicated and sorted records; indexed for lookup.</p>
+    </section>
+    <section aria-labelledby="glossary-heading">
+      <h2 id="glossary-heading">SuttaCentral Pāli-English Glossary</h2>
+      <p>Source: <a href="https://github.com/suttacentral/sc-data/blob/main/dictionaries/glossaries/en/pli2en_glossary.json">SuttaCentral/sc-data</a>.</p>
+      <p><strong>File-specific license and complete creator attribution remain unconfirmed.</strong>
+        The JSON contains no file-specific rights notice. The general SuttaCentral CC0 policy alone does
+        not establish which rights apply to this particular file. Confirm redistribution terms with SuttaCentral.</p>
+      <p>Changes: extracted short English glosses; converted markup to plain text; deduplicated and sorted
+        records; indexed for lookup.</p>
+    </section>
+    <section aria-labelledby="scope-heading">
+      <h2 id="scope-heading">Scope and redistribution</h2>
+      <p>The DPD license does not relicense NCPED, Glossary or independently written application code.
+        No blanket CC0 or MIT license is asserted for the combined dictionary data. Source labels are
+        retained on every record. To the extent this project holds its own rights in an adapted combined
+        database containing DPD, those rights are also provided under CC BY-NC-SA 4.0; the individual
+        contents retain their own rights and any outstanding permissions remain outstanding.</p>
+      <p>When redistributing the website, retain this page, <code>LICENSE-DPD.txt</code> and the source
+        notices embedded in <code>data.js</code>. When sharing DPD extracts separately, also provide the
+        attribution, license and modification notices. These notices do not resolve the outstanding
+        NCPED and Glossary permissions.</p>
+      <p>Machine-readable notices: <a href="source-notices.json">source-notices.json</a>.
+        Maintainer notes and a request template: <a href="LICENSES.md">LICENSES.md</a>.</p>
+    </section>
+  </main>
+</body>
+</html>

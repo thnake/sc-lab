@@ -1,0 +1,98 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Offline English–Pāli dictionary in both directions with transparent spelling suggestions.">
+  <title>English ↔ Pāli dictionary</title>
+  <link rel="stylesheet" href="style.css">
+  <script defer src="data.js"></script>
+  <script defer src="search.js"></script>
+  <script defer src="app.js"></script>
+</head>
+<body>
+  <main>
+    <header>
+      <p class="eyebrow">SuttaCentral dictionary data · Offline lookup</p>
+      <h1>English <span aria-hidden="true">↔</span><span class="sr-only">and</span> <span lang="pi">Pāli</span></h1>
+      <p>Look up English meanings or Pāli headwords.</p>
+    </header>
+    <form id="search-form" role="search">
+      <label for="direction">Search direction</label>
+      <select id="direction" name="direction" disabled>
+        <option value="en-pli">English → Pāli</option>
+        <option value="pli-en">Pāli → English</option>
+      </select>
+      <label id="query-label" for="query">English word or phrase</label>
+      <div class="search-row">
+        <input id="query" name="q" type="search" placeholder="Try compassion, peace, or mindfulness"
+          autocomplete="off" spellcheck="false" maxlength="100" disabled aria-describedby="search-help">
+        <button id="search-button" disabled>Search</button>
+      </div>
+      <button id="diacritics-toggle" class="diacritics-toggle" type="button"
+        aria-expanded="false" aria-controls="diacritics" hidden>
+        <span aria-hidden="true">ā</span> Diacritics <span class="disclosure" aria-hidden="true">▾</span>
+      </button>
+      <div id="diacritics" class="diacritics" role="group" aria-label="Insert Pāli diacritics" hidden>
+        <div id="diacritic-buttons" class="diacritic-buttons"></div>
+        <span class="muted">Change the previous letter, or insert at the cursor.</span>
+      </div>
+      <p id="search-help" class="muted">Spelling suggestions show the English term used. They are not synonyms.</p>
+      <label class="checkbox-label" for="partial">
+        <input id="partial" type="checkbox" checked disabled>
+        Include partial matches (2+ characters)
+      </label>
+    </form>
+    <div id="examples" class="examples" hidden>
+      <span>Try:</span>
+      <button type="button" data-query="compassion">compassion</button>
+      <button type="button" data-query="peace">peace</button>
+      <button type="button" data-query="mindfullness">mindfullness (typo)</button>
+    </div>
+    <p id="status" role="status" aria-live="polite">Loading dictionary…</p>
+    <div id="suggestions" class="suggestions" aria-label="English spelling suggestions"></div>
+    <section id="results" aria-label="Dictionary results"></section>
+    <button id="more" type="button" hidden>Show more results</button>
+    <details>
+      <summary>How to read these results</summary>
+      <p>English → Pāli uses a reverse index of Pāli–English dictionaries, not a curated English–Pāli translation dictionary.
+        A <strong>direct gloss</strong> matches a complete English meaning (ignoring leading “a”, “an”, “the”, or “to”).
+        A <strong>definition match</strong> only occurs within a longer explanation. Read the whole meaning:
+        “not happy” is not a translation of “happy”. Automatically split meanings can also need context.</p>
+      <p>Pāli → English searches the original headwords. You can omit diacritics, for example “metta” for “mettā”.
+        Exact spellings appear first; other spellings with the same letters after removing diacritics are labelled separately.
+        Within each spelling group, DPD entries appear first in numbered sense order.
+        Open “Diacritics” below the input to show the small character buttons.
+        They insert diacritics or change the same letter immediately before the cursor.
+        In partially accented queries and partial matches, matching typed diacritics rank higher within the whole-headword or partial group.
+        Diacritics can distinguish different Pāli words, so always check the displayed headword.</p>
+      <p>Partial matching finds fragments within English definitions or Pāli headwords, starting at two characters.
+        Whole-word or full-headword matches appear first. Within partial matches, typed Pāli diacritics take priority,
+        followed by prefixes, then matches inside words.
+        Partial matches are labelled: for example, “happy” can find “unhappy”, which is not an equivalent meaning.
+        Turn off “Include partial matches” for whole-word/headword lookup only.</p>
+      <p>When no whole or enabled partial match is found, nearby spellings are suggested and the best candidate's results are shown.
+        There may be several equally plausible suggestions. Distant spellings return no result rather than an arbitrary translation.
+        Spelling similarity does not imply similarity in meaning.</p>
+      <p id="sources"></p>
+      <p>All searching happens in your browser. No requests, accounts, APIs, or external fonts are required.
+        See <a href="README.md">the project notes</a> for data coverage and rebuilding.</p>
+    </details>
+    <section aria-labelledby="rights-heading">
+      <h2 id="rights-heading">Sources and licenses</h2>
+      <p>Dictionary entries retain their source-specific rights. See
+        <a href="licenses.html">source credits, licenses and modifications</a>.</p>
+      <p id="dpd-attribution" hidden>Contains modified extracts from the
+        <a href="https://dpdict.net/">Digital Pāḷi Dictionary</a>,
+        © Bodhirasa Bhikkhu, provided under
+        <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="license">CC BY-NC-SA 4.0</a>.
+        Noncommercial use only; adaptations must be shared under the same or a permitted compatible license.
+        <a href="LICENSE-DPD.txt">Full license and warranty disclaimer</a>.</p>
+      <p>NCPED and Glossary: file-specific licensing and complete attribution have not yet been confirmed.
+        Their inclusion here is not a claim that they are CC0 or that redistribution has been cleared.</p>
+    </section>
+    <footer id="metadata" class="muted"></footer>
+    <noscript>This dictionary requires JavaScript enabled in your browser.</noscript>
+  </main>
+</body>
+</html>

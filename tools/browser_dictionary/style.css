@@ -1,0 +1,71 @@
+:root {
+  color-scheme: light dark;
+  --background: #f7f5ef;
+  --card: #fffefa;
+  --text: #243c35;
+  --muted: #53665e;
+  --accent: #27644e;
+  --border: #cdd6cc;
+  font-family: system-ui, sans-serif;
+  color: var(--text);
+  background: var(--background);
+  line-height: 1.6;
+}
+* { box-sizing: border-box; }
+body { margin: 0; }
+main { max-width: 1080px; margin: 0 auto; padding: 1.5rem 1.25rem; }
+header { margin-bottom: 1.25rem; }
+h1 { font-family: Georgia, serif; font-size: clamp(2rem, 7vw, 3.5rem); margin: .2rem 0; }
+h1 span[aria-hidden] { color: var(--accent); }
+h2 { font-family: Georgia, serif; font-size: 1.6rem; margin: 0; overflow-wrap: anywhere; }
+p { margin: .5rem 0; }
+.eyebrow { font-size: .8rem; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); }
+label { display: block; font-weight: 650; margin-bottom: .5rem; }
+.search-row { display: flex; gap: .65rem; }
+input, select { min-width: 0; padding: .85rem; border: 1px solid var(--border); border-radius: .5rem; background: var(--card); color: var(--text); font: inherit; }
+input { flex: 1; }
+select { margin-bottom: 1rem; max-width: 100%; }
+.checkbox-label { display: flex; align-items: center; gap: .5rem; margin-top: .8rem; font-weight: 400; }
+.checkbox-label input { flex: none; width: 1.1rem; height: 1.1rem; accent-color: var(--accent); }
+button { border: 1px solid var(--accent); border-radius: .5rem; padding: .65rem 1rem; font: inherit; color: var(--card); background: var(--accent); cursor: pointer; }
+button:disabled { opacity: .5; cursor: wait; }
+button:hover:not(:disabled) { filter: brightness(.9); }
+:focus-visible { outline: 3px solid var(--accent); outline-offset: 3px; }
+.examples, .suggestions { display: flex; flex-wrap: wrap; gap: .5rem; align-items: center; margin: 1rem 0; }
+.examples button, .suggestions button { background: var(--card); color: var(--accent); padding: .3rem .7rem; }
+.muted, .grammar { color: var(--muted); font-size: .9rem; }
+.diacritics-toggle { display: inline-flex; align-items: center; gap: .35rem; margin-top: .4rem; padding: .2rem .4rem; border-color: transparent; background: transparent; color: var(--muted); font-size: .85rem; }
+.diacritics-toggle[aria-expanded="true"] { color: var(--accent); }
+.diacritics-toggle[aria-expanded="true"] .disclosure { transform: rotate(180deg); }
+.diacritics { display: flex; flex-wrap: wrap; align-items: center; gap: .4rem .8rem; margin-top: .5rem; }
+.diacritic-buttons { display: flex; flex-wrap: wrap; gap: .25rem; }
+.diacritic-buttons button { background: var(--card); color: var(--accent); padding: .2rem .55rem; min-width: 2rem; }
+.diacritics .muted { font-size: .78rem; }
+#status { margin: 1rem 0 .75rem; }
+#results { display: grid; grid-template-columns: minmax(0, 1fr); gap: .6rem; align-items: start; }
+.result { min-width: 0; padding: .65rem .85rem; border: 1px solid var(--border); border-radius: .45rem; background: var(--card); line-height: 1.4; overflow-wrap: anywhere; }
+.result p { margin: .25rem 0 0; }
+.result-heading { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: .15rem .65rem; }
+.result h2 { font-size: 1.25rem; line-height: 1.25; }
+.result .badge { margin: 0; color: var(--accent); font-size: .75rem; font-weight: 650; }
+.result .grammar { font-size: .8rem; }
+.definition { font-size: .95rem; }
+.matched { font-size: .78rem; color: var(--muted); }
+#more { margin-top: .75rem; }
+@media (min-width: 900px) {
+  #results { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+details { margin-top: 2rem; border-top: 1px solid var(--border); padding-top: 1rem; }
+summary { cursor: pointer; font-weight: 650; }
+details p { margin: 1rem 0; }
+a { color: var(--accent); }
+footer { margin-top: 2rem; }
+[hidden] { display: none !important; }
+.sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); }
+@media (prefers-color-scheme: dark) {
+  :root { --background: #18251f; --card: #22332b; --text: #e6ece4; --muted: #bac7bf; --accent: #9dd4b8; --border: #485d50; }
+}
+@media (max-width: 420px) {
+  .search-row { flex-direction: column; }
+  main { padding-top: 1.5rem; }
+}
