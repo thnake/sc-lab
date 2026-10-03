@@ -21,7 +21,7 @@ from tqdm import tqdm
 
 load_dotenv()
 
-BLURB_GLOB = "sc_bilara_data/root/en/blurb/*.json"
+BLURB_GLOB = "sc-data/sc_bilara_data/root/en/blurb/*.json"
 EXCLUDED_FILE_PREFIXES = ("pli-tv", "super")  # vinaya rules and collection-level blurbs, not suttas
 EMBEDDING_MODEL = "text-embedding-3-small"
 EMBEDDING_BATCH_SIZE = 100
