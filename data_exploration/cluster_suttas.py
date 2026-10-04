@@ -188,16 +188,23 @@ def render_with_info_panel(fig, title: str, output_path: str) -> None:
 <html>
 <head>
 <meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>{title}</title>
 <style>
   html, body {{ margin: 0; height: 100%; font-family: -apple-system, Arial, sans-serif; }}
+    .site-nav {{ box-sizing: border-box; min-height: 48px; display: flex; flex-wrap: wrap; align-items: center; gap: 0 20px; padding: 0 24px; border-bottom: 1px solid #ddd; background: #fafafa; font-size: 14px; }}
+    .site-nav strong {{ margin-right: auto; color: #243c35; }}
+    .site-nav a {{ padding: 12px 0; color: #53665e; text-decoration: none; }}
+    .site-nav a:hover {{ color: #27644e; text-decoration: underline; }}
+    .site-nav a[aria-current="page"] {{ color: #27644e; box-shadow: inset 0 -2px #27644e; font-weight: 600; }}
+    .site-nav a:focus-visible {{ outline: 2px solid #27644e; outline-offset: 3px; }}
   #sutta-search-bar {{
     height: 44px; box-sizing: border-box; display: flex; align-items: center; gap: 10px;
     padding: 0 24px; border-bottom: 1px solid #ddd;
   }}
-  #{SEARCH_INPUT_ID} {{ flex: 0 0 320px; padding: 6px 10px; font-size: 14px; border: 1px solid #bbb; border-radius: 4px; }}
+    #{SEARCH_INPUT_ID} {{ flex: 0 1 320px; min-width: 0; padding: 6px 10px; font-size: 14px; border: 1px solid #bbb; border-radius: 4px; }}
   #{SEARCH_STATUS_ID} {{ font-size: 13px; color: #555; }}
-  #{GRAPH_DIV_ID} {{ height: calc(85vh - 44px); width: 100%; }}
+    #{GRAPH_DIV_ID} {{ height: calc(85vh - 92px); width: 100%; }}
   #{INFO_PANEL_ID} {{
     height: 15vh; box-sizing: border-box; overflow-y: auto;
     padding: 10px 24px; border-top: 2px solid #ddd; background: #fafafa;
@@ -206,6 +213,11 @@ def render_with_info_panel(fig, title: str, output_path: str) -> None:
 </style>
 </head>
 <body>
+<nav class="site-nav" aria-label="SC Lab">
+    <strong>SC Lab</strong>
+    <a href="sutta_clusters.html" aria-current="page">Sutta Clusters</a>
+    <a href="../../tools/browser_dictionary/index.html">Dictionary</a>
+</nav>
 <div id="sutta-search-bar">
   <input id="{SEARCH_INPUT_ID}" type="text" placeholder="Search suttas by id or blurb text..." autocomplete="off" />
   <span id="{SEARCH_STATUS_ID}"></span>

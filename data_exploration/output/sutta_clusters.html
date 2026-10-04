@@ -2,16 +2,23 @@
 <html>
 <head>
 <meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>Clustered visualization of 3893 suttas (by blurb embedding similarity)</title>
 <style>
   html, body { margin: 0; height: 100%; font-family: -apple-system, Arial, sans-serif; }
+  .site-nav { box-sizing: border-box; min-height: 48px; display: flex; flex-wrap: wrap; align-items: center; gap: 0 20px; padding: 0 24px; border-bottom: 1px solid #ddd; background: #fafafa; font-size: 14px; }
+  .site-nav strong { margin-right: auto; color: #243c35; }
+  .site-nav a { padding: 12px 0; color: #53665e; text-decoration: none; }
+  .site-nav a:hover { color: #27644e; text-decoration: underline; }
+  .site-nav a[aria-current="page"] { color: #27644e; box-shadow: inset 0 -2px #27644e; font-weight: 600; }
+  .site-nav a:focus-visible { outline: 2px solid #27644e; outline-offset: 3px; }
   #sutta-search-bar {
     height: 44px; box-sizing: border-box; display: flex; align-items: center; gap: 10px;
     padding: 0 24px; border-bottom: 1px solid #ddd;
   }
-  #sutta-search-input { flex: 0 0 320px; padding: 6px 10px; font-size: 14px; border: 1px solid #bbb; border-radius: 4px; }
+  #sutta-search-input { flex: 0 1 320px; min-width: 0; padding: 6px 10px; font-size: 14px; border: 1px solid #bbb; border-radius: 4px; }
   #sutta-search-status { font-size: 13px; color: #555; }
-  #sutta-graph { height: calc(85vh - 44px); width: 100%; }
+  #sutta-graph { height: calc(85vh - 92px); width: 100%; }
   #sutta-info-panel {
     height: 15vh; box-sizing: border-box; overflow-y: auto;
     padding: 10px 24px; border-top: 2px solid #ddd; background: #fafafa;
@@ -20,6 +27,11 @@
 </style>
 </head>
 <body>
+<nav class="site-nav" aria-label="SC Lab">
+  <strong>SC Lab</strong>
+  <a href="sutta_clusters.html" aria-current="page">Sutta Clusters</a>
+  <a href="../../tools/browser_dictionary/index.html">Dictionary</a>
+</nav>
 <div id="sutta-search-bar">
   <input id="sutta-search-input" type="text" placeholder="Search suttas by id or blurb text..." autocomplete="off" />
   <span id="sutta-search-status"></span>

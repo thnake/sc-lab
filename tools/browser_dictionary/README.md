@@ -37,6 +37,41 @@ source notices. The legacy `--include-dpd` (all packages) and `--no-dpd`
 licenses remain unconfirmed; package selection does not grant redistribution
 rights.
 
+### Build Arguments
+
+Run these commands from `tools/browser_dictionary`.
+
+| Argument | What it does |
+| --- | --- |
+| No arguments | Prompts you to choose each package after showing its license notice. |
+| `--sources NAME [NAME ...]` | Includes only the named packages, without prompting. Names are case-sensitive: `NCPED`, `Glossary`, and `DPD`. Separate multiple names with spaces, not commas. |
+| `--include-dpd` | Includes all three packages without prompting. |
+| `--no-dpd` | Includes only NCPED and Glossary without prompting. |
+| `--output PATH` | Writes the JavaScript dataset to this path instead of the default `data.js` beside the build script. Relative paths are resolved from your current directory; the parent directory must already exist. |
+| `-h`, `--help` | Shows available arguments and exits without building. |
+
+Choose one selection method: `--sources`, `--include-dpd`, or `--no-dpd`.
+These options cannot be combined. You can use `--output` with any selection
+method, or with the interactive prompts.
+
+```sh
+# Show the command-line help.
+python3 build.py --help
+
+# Build all packages into the default data.js.
+python3 build.py --include-dpd
+
+# Build only NCPED and Glossary into the default data.js.
+python3 build.py --no-dpd
+
+# Build only DPD into a separate file.
+python3 build.py --sources DPD --output dpd-data.js
+```
+
+The browser app loads `data.js`; a custom output filename does not change
+which file the app loads. An existing output file is overwritten after a
+successful build.
+
 ## deprecated
 
 - `additional-info/blurbs.json`: use `bilara-data/tree/published/root/en/blurb` instead.

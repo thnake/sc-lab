@@ -81,8 +81,13 @@ def dpd_records(rows):
                 yield (plain(lemma), meaning, plain(grammar), "DPD")
 
 
+def load_source_notices():
+    path = Path(__file__).with_name("source-notices.json")
+    return json.loads(path.read_text(encoding="utf-8"))
+
+
 def select_sources():
-    notices = json.loads(Path(__file__).with_name("source-notices.json").read_text(encoding="utf-8"))
+    notices = load_source_notices()
     selected = []
     print("Choose dictionary packages to include. Review each source's licensing before redistribution.")
     for source in SOURCES:
@@ -101,19 +106,24 @@ def select_sources():
 
 
 def build(include_dpd=True, selected_sources=None):
+    """Collect distinct senses and attribution for the selected dictionaries."""
     records = set()
     sources = {}
-    notices = json.loads(Path(__file__).with_name("source-notices.json").read_text(encoding="utf-8"))
+    notices = load_source_notices()
     for source, relative_path in SOURCES.items():
         if selected_sources is not None and source not in selected_sources:
             continue
         if source == "DPD" and not include_dpd:
             continue
+
         path = ROOT / relative_path
         source_bytes = path.read_bytes()
         rows = json.loads(source_bytes.decode("utf-8"))
-        reader = dpd_records if source == "DPD" else lambda rows: simple_records(rows, source)
-        extracted = set(reader(rows))
+        if source == "DPD":
+            extracted = set(dpd_records(rows))
+        else:
+            extracted = set(simple_records(rows, source))
+
         records.update(extracted)
         sources[source] = {
             **notices[source],
@@ -127,36 +137,65 @@ def build(include_dpd=True, selected_sources=None):
     return {"version": 1, "sources": sources, "entries": sorted(records)}
 
 
-def main():
+def parse_arguments():
+    """Parse build options and resolve flags or prompts to an explicit source list."""
     parser = argparse.ArgumentParser(description=__doc__)
     dpd = parser.add_mutually_exclusive_group()
-    dpd.add_argument("--include-dpd", dest="include_dpd", action="store_true", help="build all sources without prompting")
-    dpd.add_argument("--no-dpd", dest="include_dpd", action="store_false", help="build a smaller NCPED + Glossary dataset")
+    dpd.add_argument(
+        "--include-dpd", dest="include_dpd", action="store_true",
+        help="build all sources without prompting",
+    )
+    dpd.add_argument(
+        "--no-dpd", dest="include_dpd", action="store_false",
+        help="build a smaller NCPED + Glossary dataset",
+    )
     parser.set_defaults(include_dpd=None)
     parser.add_argument("--sources", nargs="+", choices=list(SOURCES), help="select packages without prompting")
     parser.add_argument("--output", type=Path, default=Path(__file__).with_name("data.js"))
     args = parser.parse_args()
+
     if args.sources is not None and args.include_dpd is not None:
         parser.error("use --sources or the DPD flags, not both")
-    selected_sources = args.sources
-    if selected_sources is None and args.include_dpd is None:
+
+    if args.sources is not None:
+        return args
+
+    if args.include_dpd is True:
+        args.sources = list(SOURCES)
+    elif args.include_dpd is False:
+        args.sources = [source for source in SOURCES if source != "DPD"]
+    else:
         try:
-            selected_sources = select_sources()
+            args.sources = select_sources()
         except (EOFError, KeyboardInterrupt):
             parser.exit(1, "\nSelection cancelled; no output written. Use --sources for unattended builds.\n")
-        if not selected_sources:
+        if not args.sources:
             parser.error("no packages selected; no output written")
-    data = build(args.include_dpd is not False, selected_sources)
+    return args
+
+
+def format_data_script(data):
+    """Serialize the dataset as JavaScript with source-specific rights notices."""
     payload = json.dumps(data, ensure_ascii=False, separators=(",", ":"))
     # Also safe if the dataset is embedded in an HTML script in future.
     payload = payload.replace("<", "\\u003c").replace("\u2028", "\\u2028").replace("\u2029", "\\u2029")
-    header = "// Dictionary data: source-specific rights apply; see PALI_DICTIONARY.sources.\n"
+    header_lines = ["// Dictionary data: source-specific rights apply; see PALI_DICTIONARY.sources."]
     for source, notice in data["sources"].items():
-        header += f"// {source}: {notice.get('copyright', notice['title'])}; {notice['license'] or 'license unconfirmed'}.\n"
+        attribution = notice.get("copyright", notice["title"])
+        license_name = notice["license"] or "license unconfirmed"
+        header_lines.append(f"// {source}: {attribution}; {license_name}.")
         if notice.get("licenseUrl"):
-            header += f"// {notice['licenseUrl']}\n"
-    header += "// Modified extract; attribution, changes and disclaimers are embedded below.\n"
-    args.output.write_text(f"{header}globalThis.PALI_DICTIONARY = {payload};\n", encoding="utf-8")
+            header_lines.append(f"// {notice['licenseUrl']}")
+    header_lines.append("// Modified extract; attribution, changes and disclaimers are embedded below.")
+    header = "\n".join(header_lines)
+    return f"{header}\nglobalThis.PALI_DICTIONARY = {payload};\n"
+
+
+def main():
+    args = parse_arguments()
+    data = build(selected_sources=args.sources)
+    script = format_data_script(data)
+    args.output.write_text(script, encoding="utf-8")
     size = args.output.stat().st_size
     print(f"Built {args.output}: {len(data['entries']):,} senses, {size / 1024 / 1024:.2f} MiB")
 

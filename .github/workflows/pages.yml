@@ -1,10 +1,13 @@
-name: Deploy Sutta Clusters to GitHub Pages
+name: Deploy SC Lab to GitHub Pages
 
 on:
   push:
     branches: [main]
     paths:
       - data_exploration/output/sutta_clusters.html
+      - tools/browser_dictionary/**
+      - sc-data
+      - .gitmodules
       - .github/workflows/pages.yml
   workflow_dispatch:
 
@@ -26,12 +29,19 @@ jobs:
     steps:
       - name: Check out repository
         uses: actions/checkout@v4
+        with:
+          submodules: true
       - name: Configure Pages
         uses: actions/configure-pages@v5
       - name: Prepare static site
         run: |
-          mkdir -p _site
+          mkdir -p _site/dictionary
           cp data_exploration/output/sutta_clusters.html _site/index.html
+          cp tools/browser_dictionary/{index.html,app.js,search.js,style.css,licenses.html,licenses.js,LICENSE-DPD.txt,LICENSES.md,README.md,source-notices.json} _site/dictionary/
+          sed -i 's|href="sutta_clusters.html"|href="./"|; s|href="../../tools/browser_dictionary/index.html"|href="dictionary/"|' _site/index.html
+          sed -i 's|href="../../data_exploration/output/sutta_clusters.html"|href="../"|' _site/dictionary/index.html
+          python3 tools/browser_dictionary/build.py --sources DPD --output _site/dictionary/data.js
+
       - name: Upload site
         uses: actions/upload-pages-artifact@v3
         with:
