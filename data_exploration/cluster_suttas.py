@@ -140,15 +140,21 @@ DIMMED_OPACITY = 0.03
 INFO_PANEL_JS = f"""
 (function () {{
     var gd = document.getElementById("{GRAPH_DIV_ID}");
-    var panel = document.getElementById("{INFO_PANEL_ID}");
     var searchInput = document.getElementById("{SEARCH_INPUT_ID}");
     var searchStatus = document.getElementById("{SEARCH_STATUS_ID}");
 
+    gd.on("plotly_click", function (evt) {{
+        var uid = evt.points[0].hovertext;
+        window.open("https://suttacentral.net/" + encodeURIComponent(uid) + "/en/sujato", "_blank", "noopener,noreferrer");
+    }});
+
     gd.on("plotly_hover", function (evt) {{
+        var panel = document.getElementById("{INFO_PANEL_ID}");
         var pt = evt.points[0];
         panel.innerHTML = "<b>" + pt.hovertext + "</b> \\u00b7 " + pt.customdata[1] + "<br>" + pt.customdata[0];
     }});
     gd.on("plotly_unhover", function () {{
+        var panel = document.getElementById("{INFO_PANEL_ID}");
         panel.innerHTML = "Hover over a point to see its blurb here.";
     }});
 

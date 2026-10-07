@@ -4,8 +4,8 @@ on:
   push:
     branches: [main]
     paths:
-      - data_exploration/output/sutta_clusters.html
       - tools/browser_dictionary/**
+      - tools/sutta_explorer/**
       - sc-data
       - .gitmodules
       - .github/workflows/pages.yml
@@ -35,11 +35,13 @@ jobs:
         uses: actions/configure-pages@v5
       - name: Prepare static site
         run: |
-          mkdir -p _site/dictionary
-          cp data_exploration/output/sutta_clusters.html _site/index.html
+          mkdir -p _site/dictionary _site/explorer
+          cp tools/sutta_explorer/{index.html,app.js,style.css,data.js} _site/
+          cp tools/sutta_explorer/{index.html,app.js,style.css,data.js} _site/explorer/
+          sed -i 's|href="../browser_dictionary/index.html"|href="dictionary/"|' _site/index.html
+          sed -i 's|href="../browser_dictionary/index.html"|href="../dictionary/"|' _site/explorer/index.html
           cp tools/browser_dictionary/{index.html,app.js,search.js,style.css,licenses.html,licenses.js,LICENSE-DPD.txt,LICENSES.md,README.md,source-notices.json} _site/dictionary/
-          sed -i 's|href="sutta_clusters.html"|href="./"|; s|href="../../tools/browser_dictionary/index.html"|href="dictionary/"|' _site/index.html
-          sed -i 's|href="../../data_exploration/output/sutta_clusters.html"|href="../"|' _site/dictionary/index.html
+          sed -i 's|href="../sutta_explorer/index.html"|href="../"|' _site/dictionary/index.html
           python3 tools/browser_dictionary/build.py --sources DPD --output _site/dictionary/data.js
 
       - name: Upload site

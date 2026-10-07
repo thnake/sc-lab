@@ -41,15 +41,21 @@
                             
 (function () {
     var gd = document.getElementById("sutta-graph");
-    var panel = document.getElementById("sutta-info-panel");
     var searchInput = document.getElementById("sutta-search-input");
     var searchStatus = document.getElementById("sutta-search-status");
 
+    gd.on("plotly_click", function (evt) {
+      var uid = evt.points[0].hovertext;
+      window.open("https://suttacentral.net/" + encodeURIComponent(uid) + "/en/sujato", "_blank", "noopener,noreferrer");
+    });
+
     gd.on("plotly_hover", function (evt) {
+      var panel = document.getElementById("sutta-info-panel");
         var pt = evt.points[0];
         panel.innerHTML = "<b>" + pt.hovertext + "</b> \u00b7 " + pt.customdata[1] + "<br>" + pt.customdata[0];
     });
     gd.on("plotly_unhover", function () {
+      var panel = document.getElementById("sutta-info-panel");
         panel.innerHTML = "Hover over a point to see its blurb here.";
     });
 
