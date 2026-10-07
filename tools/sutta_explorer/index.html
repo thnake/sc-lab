@@ -16,9 +16,9 @@
         <label for="query">Search<input id="query" type="search" placeholder="Sutta ID or blurb" autocomplete="off"></label>
         <label for="collection">Collection<select id="collection"><option value="">All collections</option></select></label>
       </div>
-      <div class="view-bar"><div role="tablist" aria-label="View"><button id="list-tab" role="tab" aria-selected="true" aria-controls="list-panel">List</button><button id="map-tab" role="tab" aria-selected="false" aria-controls="map-panel" tabindex="-1">Map</button></div><span id="status" role="status"></span></div>
-      <div id="list-panel" role="tabpanel" aria-labelledby="list-tab"><ul id="results"></ul><button id="more" hidden>Show more</button></div>
-      <div id="map-panel" role="tabpanel" aria-labelledby="map-tab" hidden><div id="map"></div><p id="map-status" role="status"></p></div>
+      <div class="view-bar"><div role="tablist" aria-label="View"><button id="map-tab" role="tab" aria-selected="true" aria-controls="map-panel">Map</button><button id="list-tab" role="tab" aria-selected="false" aria-controls="list-panel" tabindex="-1">List</button></div><span id="status" role="status"></span></div>
+      <div id="list-panel" role="tabpanel" aria-labelledby="list-tab" hidden><ul id="results"></ul><button id="more" hidden>Show more</button></div>
+      <div id="map-panel" role="tabpanel" aria-labelledby="map-tab"><div id="map"></div><p id="map-status" role="status"></p></div>
     </section>
     <aside id="details" aria-label="Selected sutta" tabindex="-1"><h1>Suttas</h1><p id="total"></p></aside>
   </main>

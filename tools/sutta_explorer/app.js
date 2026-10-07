@@ -127,13 +127,13 @@ for (const book of [...new Set(suttas.map(sutta => sutta.book))].sort()) {
     option.value = book;
     collection.append(option);
 }
-for (const name of ["list", "map"]) {
+for (const name of ["map", "list"]) {
     const tab = document.getElementById(name + "-tab");
     tab.addEventListener("click", () => setView(name === "map"));
     tab.addEventListener("keydown", event => {
         if (!["ArrowLeft", "ArrowRight", "Home", "End"].includes(event.key)) return;
         event.preventDefault();
-        const showMap = event.key === "End" || (event.key !== "Home" && !mapVisible);
+        const showMap = event.key === "Home" || (event.key !== "End" && !mapVisible);
         setView(showMap);
         document.getElementById(showMap ? "map-tab" : "list-tab").focus();
     });
@@ -145,4 +145,5 @@ document.getElementById("total").textContent = suttas.length + " suttas · Engli
 renderResults();
 const initial = suttas.findIndex(sutta => "#" + encodeURIComponent(sutta.uid) === location.hash);
 if (initial >= 0) selectSutta(initial);
+setView(true);
 if (!suttas.length) status.textContent = "Data unavailable. Run the explorer builder first.";

@@ -1,6 +1,6 @@
 .vscode
 .env
-.pyc
+*.pyc
 # Rebuildable browser dictionary data and Python bytecode
 tools/browser_dictionary/data.js
 tools/browser_dictionary/__pycache__/
