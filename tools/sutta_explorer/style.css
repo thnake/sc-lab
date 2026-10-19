@@ -1,6 +1,6 @@
 @import url('https://fonts.googleapis.com/css2?family=Source+Sans+3:wght@400;600;700&family=Source+Serif+4:wght@500;600&display=swap');
 
-:root { --ink: #20332c; --muted: #58655f; --accent: #236c50; --line: #d7ded9; --paper: #fcfdfc; --selected: #e7f1eb; }
+:root { --ink: #20332c; --muted: #58655f; --accent: #236c50; --line: #d7ded9; --paper: #fcfdfc; --selected: #e7f1eb; --highlight: #ffe08a; }
 * { box-sizing: border-box; }
 body { margin: 0; background: var(--paper); color: var(--ink); font-family: 'Source Sans 3', sans-serif; font-size: 16px; letter-spacing: 0; }
 header { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 8px 24px; padding: 18px 28px; border-bottom: 1px solid var(--line); background: #f0f4f1; }
@@ -26,6 +26,8 @@ ul { list-style: none; padding: 0; margin: 0; }
 .sutta[aria-pressed=true] { background: var(--selected); box-shadow: inset 3px 0 var(--accent); }
 .sutta strong { display: block; font-size: 17px; margin-bottom: 4px; }
 .sutta span { display: block; line-height: 1.5; overflow-wrap: anywhere; }
+.sutta .aliases { margin-top: 5px; color: var(--muted); font-size: 14px; }
+mark { border-radius: 2px; padding: 0 1px; background: var(--highlight); color: inherit; }
 #more { display: block; min-height: 44px; padding: 8px 20px; margin: 20px auto; background: white; border: 1px solid var(--line); border-radius: 4px; }
 [hidden] { display: none !important; }
 aside { padding: 28px; border-left: 1px solid var(--line); background: #f5f7f5; align-self: start; position: sticky; top: 0; max-height: 100dvh; overflow: auto; }

@@ -23,14 +23,80 @@ function element(tag, text, className) {
     return node;
 }
 
+function normalizeSearchText(text) {
+    return text.normalize("NFKD").replace(/\p{M}/gu, "").toLowerCase();
+}
+
+function searchTerms() {
+    const query = normalizeSearchText(queryInput.value.trim());
+    const terms = [];
+    for (const match of query.matchAll(/[“"]([^”"]+)[”"]|\S+/g)) {
+        const term = (match[1] || match[0]).trim();
+        if (term) terms.push(term);
+    }
+    return terms;
+}
+
+function highlightedElement(tag, text, terms, className) {
+    const node = element(tag, undefined, className);
+    if (!terms.length) {
+        node.textContent = text;
+        return node;
+    }
+    const units = [];
+    let offset = 0;
+    for (const character of text) {
+        const end = offset + character.length;
+        if (/\p{M}/u.test(character) && units.length) {
+            units.at(-1).text += character;
+            units.at(-1).end = end;
+        } else {
+            units.push({text: character, start: offset, end});
+        }
+        offset = end;
+    }
+    const normalized = units.map(unit => normalizeSearchText(unit.text)).join("");
+    const positions = units.flatMap(unit => [...normalizeSearchText(unit.text)].map(() => unit));
+    const ranges = [];
+    for (const term of terms) {
+        let start = 0;
+        while ((start = normalized.indexOf(term, start)) >= 0) {
+            ranges.push({start: positions[start].start, end: positions[start + term.length - 1].end});
+            start += term.length;
+        }
+    }
+    ranges.sort((first, second) => first.start - second.start || first.end - second.end);
+    const merged = ranges.reduce((result, range) => {
+        const previous = result.at(-1);
+        if (previous && range.start <= previous.end) previous.end = Math.max(previous.end, range.end);
+        else result.push(range);
+        return result;
+    }, []);
+    let cursor = 0;
+    for (const range of merged) {
+        node.append(document.createTextNode(text.slice(cursor, range.start)));
+        node.append(element("mark", text.slice(range.start, range.end)));
+        cursor = range.end;
+    }
+    node.append(document.createTextNode(text.slice(cursor)));
+    return node;
+}
+
 function resultItem(index) {
     const sutta = suttas[index];
+    const terms = searchTerms();
     const item = element("li");
     const button = element("button", undefined, "sutta");
     button.type = "button";
     button.dataset.index = index;
     button.setAttribute("aria-pressed", String(index === selected));
-    button.append(element("strong", sutta.uid), element("span", sutta.blurb));
+    button.append(highlightedElement("strong", sutta.uid, terms), highlightedElement("span", sutta.blurb, terms));
+    const visibleText = normalizeSearchText(sutta.uid + " " + sutta.blurb);
+    const hiddenTerms = terms.filter(term => !visibleText.includes(term));
+    const matchingAliases = (sutta.aliases || []).filter(alias => hiddenTerms.some(term => normalizeSearchText(alias).includes(term)));
+    if (matchingAliases.length) {
+        button.append(highlightedElement("span", "Also known as: " + matchingAliases.join(", "), terms, "aliases"));
+    }
     button.addEventListener("click", () => selectSutta(index, true));
     item.append(button);
     return item;
@@ -39,6 +105,7 @@ function resultItem(index) {
 function selectSutta(index, focusDetails = false) {
     selected = index;
     const sutta = suttas[index];
+    const terms = searchTerms();
     const link = element("a", "Read on SuttaCentral", "read");
     link.href = sutta.url || "https://suttacentral.net/" + encodeURIComponent(sutta.uid);
     link.target = "_blank";
@@ -46,7 +113,7 @@ function selectSutta(index, focusDetails = false) {
     const neighbors = element("ul");
     neighbors.id = "neighbors";
     sutta.neighbors.forEach(neighbor => neighbors.append(resultItem(neighbor)));
-    details.replaceChildren(element("h1", sutta.uid), element("div", sutta.book.toUpperCase() + " · Cluster " + sutta.cluster, "meta"), element("p", sutta.blurb), link, element("h2", "Similar blurbs"), neighbors);
+    details.replaceChildren(highlightedElement("h1", sutta.uid, terms), element("div", sutta.book.toUpperCase() + " · Cluster " + sutta.cluster, "meta"), highlightedElement("p", sutta.blurb, terms), link, element("h2", "Similar blurbs"), neighbors);
     document.querySelectorAll(".sutta").forEach(button => button.setAttribute("aria-pressed", String(Number(button.dataset.index) === selected)));
     history.replaceState(null, "", "#" + encodeURIComponent(sutta.uid));
     if (mapReady) updateMap();
@@ -62,10 +129,12 @@ function renderResults() {
 }
 
 function filter() {
-    const query = queryInput.value.trim().toLowerCase();
+    const query = normalizeSearchText(queryInput.value.trim());
+    const terms = searchTerms();
     matching = suttas.map((_, index) => index).filter(index => {
         const sutta = suttas[index];
-        return (!collection.value || sutta.book === collection.value) && (sutta.uid + " " + sutta.blurb).toLowerCase().includes(query);
+        const searchable = normalizeSearchText([sutta.uid, sutta.blurb, ...(sutta.aliases || [])].join(" "));
+        return (!collection.value || sutta.book === collection.value) && terms.every(term => searchable.includes(term));
     });
     matching.sort((first, second) => Number(suttas[second].uid === query) - Number(suttas[first].uid === query));
     limit = 40;

@@ -53,11 +53,16 @@ def build():
         raise ValueError("Embedding cache contains zero-length vectors")
     normalized = (embeddings / norms).astype(np.float32)
     ordered = [records[uid] for uid in uids]
+    aliases = {
+        entry["uid"]: entry["alias"]
+        for entry in json.loads((ROOT / "sc-data/additional-info/alias.json").read_text(encoding="utf-8"))
+    }
     translated = {
         path.name.removesuffix("_translation-en-sujato.json")
         for path in (ROOT / "sc-data/sc_bilara_data/translation/en/sujato").rglob("*_translation-en-sujato.json")
     }
     for record in ordered:
+        record["aliases"] = aliases.get(record["uid"], [])
         record["url"] = "https://suttacentral.net/" + record["uid"]
         if record["uid"] in translated:
             record["url"] += "/en/sujato"
