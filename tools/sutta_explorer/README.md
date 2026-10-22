@@ -9,9 +9,10 @@ Build from the repository's existing 2D chart and embedding cache:
 uv run --no-project --with numpy python tools/sutta_explorer/build.py
 ```
 
-Open `index.html` directly in a browser. Search, collection filters, selection,
-and similar blurbs work without a server or API. The optional map loads Plotly
-from its CDN; fonts also use a CDN with local fallbacks.
+Open `index.html` directly in a browser. Search by sutta ID, Pali title, or
+English blurb; collection filters, selection, and similar blurbs work without a
+server or API. The optional map loads Plotly from its CDN; fonts also use a CDN
+with local fallbacks.
 
 The builder verifies that chart IDs match cached embedding IDs and computes
 12 nearest neighbors using cosine similarity in the original embedding space.

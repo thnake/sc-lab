@@ -90,8 +90,10 @@ function resultItem(index) {
     button.type = "button";
     button.dataset.index = index;
     button.setAttribute("aria-pressed", String(index === selected));
-    button.append(highlightedElement("strong", sutta.uid, terms), highlightedElement("span", sutta.blurb, terms));
-    const visibleText = normalizeSearchText(sutta.uid + " " + sutta.blurb);
+    button.append(highlightedElement("strong", sutta.uid, terms));
+    if (sutta.title) button.append(highlightedElement("span", sutta.title, terms, "title"));
+    button.append(highlightedElement("span", sutta.blurb, terms));
+    const visibleText = normalizeSearchText([sutta.uid, sutta.title, sutta.blurb].join(" "));
     const hiddenTerms = terms.filter(term => !visibleText.includes(term));
     const matchingAliases = (sutta.aliases || []).filter(alias => hiddenTerms.some(term => normalizeSearchText(alias).includes(term)));
     if (matchingAliases.length) {
@@ -113,7 +115,7 @@ function selectSutta(index, focusDetails = false) {
     const neighbors = element("ul");
     neighbors.id = "neighbors";
     sutta.neighbors.forEach(neighbor => neighbors.append(resultItem(neighbor)));
-    details.replaceChildren(highlightedElement("h1", sutta.uid, terms), element("div", sutta.book.toUpperCase() + " · Cluster " + sutta.cluster, "meta"), highlightedElement("p", sutta.blurb, terms), link, element("h2", "Similar blurbs"), neighbors);
+    details.replaceChildren(highlightedElement("h1", sutta.title || sutta.uid, terms), element("div", sutta.uid.toUpperCase() + " · " + sutta.book.toUpperCase() + " · Cluster " + sutta.cluster, "meta"), highlightedElement("p", sutta.blurb, terms), link, element("h2", "Similar blurbs"), neighbors);
     document.querySelectorAll(".sutta").forEach(button => button.setAttribute("aria-pressed", String(Number(button.dataset.index) === selected)));
     history.replaceState(null, "", "#" + encodeURIComponent(sutta.uid));
     if (mapReady) updateMap();
@@ -133,7 +135,7 @@ function filter() {
     const terms = searchTerms();
     matching = suttas.map((_, index) => index).filter(index => {
         const sutta = suttas[index];
-        const searchable = normalizeSearchText([sutta.uid, sutta.blurb, ...(sutta.aliases || [])].join(" "));
+        const searchable = normalizeSearchText([sutta.uid, sutta.title, sutta.blurb, ...(sutta.aliases || [])].join(" "));
         return (!collection.value || sutta.book === collection.value) && terms.every(term => searchable.includes(term));
     });
     matching.sort((first, second) => Number(suttas[second].uid === query) - Number(suttas[first].uid === query));
@@ -161,15 +163,15 @@ async function updateMap() {
     try {
         await loadPlotly();
         if (revision !== mapRevision || !mapVisible) return;
-        const palette = ["#236c50", "#ba5835", "#466ab2", "#b08016", "#925484", "#25858a", "#646f35", "#ac4657", "#576171", "#786044"];
+        const palette = ["#66c292", "#e27958", "#7399e8", "#d5a83f", "#bc7fc1", "#4bbcc0", "#9caf56", "#de7184", "#91a0b5", "#c49a72"];
         const traces = [{
             type: "scattergl", mode: "markers",
             x: matching.map(index => suttas[index].x), y: matching.map(index => suttas[index].y),
-            customdata: matching, text: matching.map(index => suttas[index].uid), hovertemplate: "%{text}<extra></extra>",
+            customdata: matching, text: matching.map(index => [suttas[index].uid, suttas[index].title].filter(Boolean).join(" · ")), hovertemplate: "%{text}<extra></extra>",
             marker: {size: 7, opacity: 0.7, color: matching.map(index => palette[Number(suttas[index].cluster) % palette.length])}
         }];
-        if (selected >= 0) traces.push({type: "scattergl", mode: "markers", x: [suttas[selected].x], y: [suttas[selected].y], customdata: [selected], text: [suttas[selected].uid], hovertemplate: "%{text}<extra></extra>", marker: {size: 16, color: "#20332c", symbol: "circle-open", line: {width: 3}}});
-        await Plotly.react("map", traces, {margin: {t: 12, b: 12, l: 12, r: 12}, showlegend: false, dragmode: "pan", uirevision: "suttas", paper_bgcolor: "#fcfdfc", plot_bgcolor: "#fcfdfc", xaxis: {visible: false}, yaxis: {visible: false}}, {responsive: true, displaylogo: false, scrollZoom: false, modeBarButtonsToRemove: ["select2d", "lasso2d", "toImage"]});
+        if (selected >= 0) traces.push({type: "scattergl", mode: "markers", x: [suttas[selected].x], y: [suttas[selected].y], customdata: [selected], text: [suttas[selected].uid], hovertemplate: "%{text}<extra></extra>", marker: {size: 16, color: "#f1eee7", symbol: "circle-open", line: {width: 3}}});
+        await Plotly.react("map", traces, {margin: {t: 12, b: 12, l: 12, r: 12}, showlegend: false, dragmode: "pan", uirevision: "suttas", paper_bgcolor: "#171918", plot_bgcolor: "#171918", font: {color: "#f1eee7"}, xaxis: {visible: false}, yaxis: {visible: false}}, {responsive: true, displaylogo: false, scrollZoom: false, modeBarButtonsToRemove: ["select2d", "lasso2d", "toImage"]});
         if (!mapReady) document.getElementById("map").on("plotly_click", event => selectSutta(event.points[0].customdata, true));
         mapReady = true;
         mapStatus.textContent = "";

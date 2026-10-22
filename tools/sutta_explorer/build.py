@@ -61,10 +61,20 @@ def build():
         path.name.removesuffix("_translation-en-sujato.json")
         for path in (ROOT / "sc-data/sc_bilara_data/translation/en/sujato").rglob("*_translation-en-sujato.json")
     }
+    pali_titles = {}
+    names_path = ROOT / "sc-data/sc_bilara_data/root/misc/site/name/sutta"
+    for path in names_path.glob("*_root-misc-site.json"):
+        for key, title in json.loads(path.read_text(encoding="utf-8")).items():
+            _, uid = key.split(".", 1)
+            if uid in pali_titles:
+                raise ValueError(f"Duplicate Pali name for {uid}")
+            pali_titles[uid] = title.strip()
     for record in ordered:
+        uid = record["uid"]
+        record["title"] = pali_titles.get(uid, "")
         record["aliases"] = aliases.get(record["uid"], [])
         record["url"] = "https://suttacentral.net/" + record["uid"]
-        if record["uid"] in translated:
+        if uid in translated:
             record["url"] += "/en/sujato"
     count = min(12, len(uids) - 1)
     for start_index in range(0, len(uids), 256):
@@ -76,7 +86,8 @@ def build():
             ordered[own_index]["neighbors"] = [int(index) for index in neighbors]
     output = HERE / "data.js"
     output.write_text("window.SUTTAS = " + json.dumps(ordered, ensure_ascii=True, separators=(",", ":")) + ";\n", encoding="utf-8")
-    print(f"Built {len(ordered)} suttas with {count} neighbors each: {output}")
+    named = sum(bool(record["title"]) for record in ordered)
+    print(f"Built {len(ordered)} suttas ({named} with Pali names) with {count} neighbors each: {output}")
 
 
 if __name__ == "__main__":
