@@ -36,6 +36,7 @@ h1, h2 { font-family: 'Source Serif 4', Georgia, serif; font-weight: 600; }
 h1 { font-size: 27px; margin: 0 0 10px; }
 h2 { font-size: 20px; margin: 28px 0 12px; }
 aside p { line-height: 1.6; overflow-wrap: anywhere; }
+.source { margin: 28px 0 0; padding-top: 16px; border-top: 1px solid var(--line); color: var(--muted); font-size: 14px; line-height: 1.5; }
 .read { display: inline-flex; min-height: 44px; align-items: center; font-weight: 600; }
 #neighbors .sutta { padding-left: 0; }
 #map { height: 60dvh; min-height: 320px; width: 100%; }

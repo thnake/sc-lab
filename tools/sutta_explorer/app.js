@@ -5,6 +5,7 @@ const queryInput = document.getElementById("query");
 const collection = document.getElementById("collection");
 const results = document.getElementById("results");
 const details = document.getElementById("details");
+const detailsContent = document.getElementById("details-content");
 const status = document.getElementById("status");
 const more = document.getElementById("more");
 const mapStatus = document.getElementById("map-status");
@@ -115,7 +116,7 @@ function selectSutta(index, focusDetails = false) {
     const neighbors = element("ul");
     neighbors.id = "neighbors";
     sutta.neighbors.forEach(neighbor => neighbors.append(resultItem(neighbor)));
-    details.replaceChildren(highlightedElement("h1", sutta.title || sutta.uid, terms), element("div", sutta.uid.toUpperCase() + " · " + sutta.book.toUpperCase() + " · Cluster " + sutta.cluster, "meta"), highlightedElement("p", sutta.blurb, terms), link, element("h2", "Similar blurbs"), neighbors);
+    detailsContent.replaceChildren(highlightedElement("h1", sutta.title || sutta.uid, terms), element("div", sutta.uid.toUpperCase() + " · " + sutta.book.toUpperCase() + " · Cluster " + sutta.cluster, "meta"), highlightedElement("p", sutta.blurb, terms), link, element("h2", "Similar blurbs"), neighbors);
     document.querySelectorAll(".sutta").forEach(button => button.setAttribute("aria-pressed", String(Number(button.dataset.index) === selected)));
     history.replaceState(null, "", "#" + encodeURIComponent(sutta.uid));
     if (mapReady) updateMap();
